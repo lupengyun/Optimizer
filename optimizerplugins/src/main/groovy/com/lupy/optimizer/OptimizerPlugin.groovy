@@ -24,10 +24,13 @@ class OptimizerPlugin implements Plugin<Project> {
         project.afterEvaluate {
             project.android.applicationVariants.all {
                 BaseVariant variant ->
-                    project.tasks.create("optimizerTask${baseVariant.name}", OptimizerTask){
-                        manifestFile = variant.outputs.first().processManifest.aaptFriendlyManifestOutputFile
+                    def task = project.tasks.create("optimizerTask${variant.name.capitalize()}", OptimizerTask) {
+                        manifestFile ="${project.projectDir}/src/main/AndroidManifest.xml"
                         minSdk = variant.mergeResources.minSdk
+                        fileDir = variant.mergeResources.outputDir
                     }
+                    variant.outputs.first().processResources.dependsOn task
+                    task.dependsOn variant.outputs.first().processManifest
             }
         }
     }

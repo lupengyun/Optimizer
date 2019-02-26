@@ -4,9 +4,23 @@ apply plugin: 'groovy'
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation 'com.android.tools.build:gradle:3.3.1'
+    implementation 'com.android.tools.build:gradle:2.3.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 sourceCompatibility = "7"
 targetCompatibility = "7"
+
+
+group 'com.lupy.optimizer'
+version '1.1'
+apply plugin: "maven-publish"
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            from components.java
+            artifactId 'optimizer'
+        }
+    }
+}

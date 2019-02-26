@@ -4,12 +4,43 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
+
 /**
  * @author Lupy
  * @since 2019/2/25
  * @description 压缩工具操作类
  */
 class OptimizerUtils {
+
+    def static final PNG = ".png"
+    def static final JPG = ".jpg"
+    def static final JPEG = ".jpeg"
+    def static final WEBP = ".webp"
+    def static final PNG9 = ".9.png"
+
+    /**
+     * 是否含有alpha通道
+     * @param file
+     * @return
+     */
+    def static isTransporent(File file) {
+        def read = ImageIO.read(file)
+        return read.colorModel.hasAlpha()
+    }
+
+    def static optimizerPng(File file) {
+        return (file.name.endsWith(PNG) || file.name.endsWith(PNG.toUpperCase())) &&
+                !file.name.endsWith(PNG9) && !file.name.endsWith(PNG9.toUpperCase())
+    }
+
+    def static optimizerJpg(File file) {
+        return file.name.endsWith(JPG) ||
+                file.name.endsWith(JPG.toUpperCase()) ||
+                file.name.endsWith(JPEG) ||
+                file.name.endsWith(JPEG.toUpperCase())
+    }
 
     /**
      * 获取web生成工具名字
@@ -52,7 +83,7 @@ class OptimizerUtils {
         } else {
             file.parentFile.mkdirs()
             new FileOutputStream(file).withStream {
-                def is = OptimizerUtils.class.getResourceAsStream("${fileName}")
+                def is = OptimizerUtils.class.getResourceAsStream("/$name/${fileName}")
                 it.write(is.bytes)
                 is.close()
             }
